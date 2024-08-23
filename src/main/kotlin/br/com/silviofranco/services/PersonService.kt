@@ -33,16 +33,17 @@ class PersonService {
         return repository.save(person)
     }
 
-    fun update(person: Person) {
+    fun update(person: Person): Person {
         logger.info("Updating person with ID ${person.id}!")
         val entity = repository.findById(person.id)
             .orElseThrow { ResourceNotFoundException("No records found for this ID!") }
 
-        person.firstName = person.firstName
-        person.lastName = person.lastName
-        person.address = person.address
-        person.gender = person.gender
+        entity.firstName = person.firstName
+        entity.lastName = person.lastName
+        entity.address = person.address
+        entity.gender = person.gender
 
+        return repository.save(entity)
     }
 
     fun delete(id: Long) {
