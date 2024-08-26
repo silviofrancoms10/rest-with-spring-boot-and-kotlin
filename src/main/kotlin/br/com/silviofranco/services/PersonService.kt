@@ -1,7 +1,9 @@
 package br.com.silviofranco.services
 
 import br.com.silviofranco.data.vo.v1.PersonVO
+import br.com.silviofranco.data.vo.v2.PersonVO as PersonVOV2
 import br.com.silviofranco.exceptions.ResourceNotFoundException
+import br.com.silviofranco.mapper.custom.PersonMapper
 import br.com.silviofranco.model.Person
 import br.com.silviofranco.repository.PersonRepository
 import org.modelmapper.ModelMapper
@@ -14,6 +16,10 @@ class PersonService {
 
     @Autowired
     private lateinit var repository: PersonRepository
+
+    @Autowired
+    private lateinit var personMapper: PersonMapper
+
     private val modelMapper = ModelMapper()
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
@@ -35,6 +41,12 @@ class PersonService {
         logger.info("Creating a new person with name ${person.firstName}!")
         val entity: Person = modelMapper.map(person, Person::class.java)
         return modelMapper.map(repository.save(entity), PersonVO::class.java)
+    }
+
+    fun createV2(person: PersonVOV2): PersonVOV2 {
+        logger.info("Creating a new person with name ${person.firstName}!")
+        val entity: Person = personMapper.mapVOToEntity(person)
+        return personMapper.mapEntityToVO(repository.save(entity))
     }
 
     fun update(person: PersonVO): PersonVO {
