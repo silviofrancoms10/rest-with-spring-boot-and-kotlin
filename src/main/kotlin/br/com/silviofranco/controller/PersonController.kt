@@ -19,7 +19,7 @@ class PersonController {
         return service.findAll()
     }
 
-   /* @GetMapping(value = ["/{id}"],
+    @GetMapping(value = ["/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE])
     fun findById(@PathVariable(value = "id") id: Long): PersonVO {
         return service.findById(id)
@@ -35,7 +35,7 @@ class PersonController {
         produces = [MediaType.APPLICATION_JSON_VALUE])
     fun update(@RequestBody person: PersonVO): PersonVO {
         return service.update(person)
-    }*/
+    }
 
     @DeleteMapping(value = ["/{id}"],
         produces = [MediaType.APPLICATION_JSON_VALUE])

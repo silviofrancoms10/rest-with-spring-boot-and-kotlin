@@ -22,19 +22,22 @@ class PersonService {
         return modelMapper.map(repository.findAll(), Array<PersonVO>::class.java).toList()
     }
 
-    fun findById(id: Long): Person {
+    fun findById(id: Long): PersonVO {
         logger.info("Finding one person!")
 
-        return repository.findById(id)
-            .orElseThrow { ResourceNotFoundException("No records found for this ID!") }
+        return modelMapper.map(
+            repository.findById(id).orElseThrow { ResourceNotFoundException("No records found for this ID!") },
+            PersonVO::class.java
+        )
     }
 
-    fun create(person: Person): Person {
+    fun create(person: PersonVO): PersonVO {
         logger.info("Creating a new person with name ${person.firstName}!")
-        return repository.save(person)
+        val entity: Person = modelMapper.map(person, Person::class.java)
+        return modelMapper.map(repository.save(entity), PersonVO::class.java)
     }
 
-    fun update(person: Person): Person {
+    fun update(person: PersonVO): PersonVO {
         logger.info("Updating person with ID ${person.id}!")
         val entity = repository.findById(person.id)
             .orElseThrow { ResourceNotFoundException("No records found for this ID!") }
@@ -44,7 +47,7 @@ class PersonService {
         entity.address = person.address
         entity.gender = person.gender
 
-        return repository.save(entity)
+        return modelMapper.map(repository.save(entity), PersonVO::class.java)
     }
 
     fun delete(id: Long) {
