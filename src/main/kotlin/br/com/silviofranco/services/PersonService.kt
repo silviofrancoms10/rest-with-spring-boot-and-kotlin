@@ -1,8 +1,10 @@
 package br.com.silviofranco.services
 
+import br.com.silviofranco.data.vo.v1.PersonVO
 import br.com.silviofranco.exceptions.ResourceNotFoundException
 import br.com.silviofranco.model.Person
 import br.com.silviofranco.repository.PersonRepository
+import org.modelmapper.ModelMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
@@ -12,13 +14,12 @@ class PersonService {
 
     @Autowired
     private lateinit var repository: PersonRepository
-
+    private val modelMapper = ModelMapper()
     private val logger = Logger.getLogger(PersonService::class.java.name)
 
-    fun findAll(): List<Person> {
+    fun findAll(): List<PersonVO> {
         logger.info("Finding all people!")
-
-        return repository.findAll()
+        return modelMapper.map(repository.findAll(), Array<PersonVO>::class.java).toList()
     }
 
     fun findById(id: Long): Person {
