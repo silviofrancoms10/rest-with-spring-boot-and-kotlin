@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/db_silvio?allowPublicKeyRetrieval=true&useSSL=true&useTimezone=true&serverTimezone=UTC
-    username: root
-    password: 1234
+    username: silvio
+    password: 123456
   jpa:
     hibernate:
       ddl-auto: none
