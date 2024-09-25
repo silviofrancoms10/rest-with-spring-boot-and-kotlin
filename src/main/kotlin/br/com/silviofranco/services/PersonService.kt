@@ -29,7 +29,13 @@ class PersonService {
 
     fun findAll(): List<PersonVO> {
         logger.info("Finding all people!")
-        return repository.findAll().map { personMapper.mapEntityToVO(it) }
+        val persons = repository.findAll()
+        val vos = persons.map { personMapper.mapEntityToVO(it) }
+        for (person in vos) {
+            val withSelfRel = linkTo(PersonController::class.java).slash(person.key).withSelfRel()
+            person.add(withSelfRel)
+        }
+        return vos
     }
 
     fun findById(id: Long): PersonVO {
@@ -45,13 +51,19 @@ class PersonService {
     fun create(person: PersonVO): PersonVO {
         logger.info("Creating a new person with name ${person.firstName}!")
         val entity: Person = personMapper.mapVOToEntity(person)
-        return personMapper.mapEntityToVO(repository.save(entity))
+        val personVO: PersonVO = personMapper.mapEntityToVO(repository.save(entity))
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
+        personVO.add(withSelfRel)
+        return personVO
     }
 
     fun createV2(person: PersonVOV2): PersonVOV2 {
         logger.info("Creating a new person with name ${person.firstName}!")
         val entity: Person = person2Mapper.mapVOToEntity(person)
-        return person2Mapper.mapEntityToVO(repository.save(entity))
+        val personVOV2: PersonVOV2 = person2Mapper.mapEntityToVO(repository.save(entity))
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVOV2.key).withSelfRel()
+        personVOV2.add(withSelfRel)
+        return personVOV2
     }
 
     fun update(person: PersonVO): PersonVO {
@@ -64,7 +76,10 @@ class PersonService {
         entity.address = person.address
         entity.gender = person.gender
 
-        return personMapper.mapEntityToVO(repository.save(entity))
+        val personVO: PersonVO = personMapper.mapEntityToVO(repository.save(entity))
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
+        personVO.add(withSelfRel)
+        return personVO
     }
 
     fun delete(id: Long) {
