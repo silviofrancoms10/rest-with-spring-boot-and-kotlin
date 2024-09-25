@@ -1,5 +1,6 @@
 package br.com.silviofranco.services
 
+import br.com.silviofranco.controller.PersonController
 import br.com.silviofranco.data.vo.v1.PersonVO
 import br.com.silviofranco.exceptions.ResourceNotFoundException
 import br.com.silviofranco.mapper.custom.Person2Mapper
@@ -7,6 +8,7 @@ import br.com.silviofranco.mapper.custom.PersonMapper
 import br.com.silviofranco.model.Person
 import br.com.silviofranco.repository.PersonRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo
 import org.springframework.stereotype.Service
 import java.util.logging.Logger
 import br.com.silviofranco.data.vo.v2.PersonVO as PersonVOV2
@@ -31,10 +33,13 @@ class PersonService {
     }
 
     fun findById(id: Long): PersonVO {
-        logger.info("Finding one person!")
+        logger.info("Finding one person with ID! $id")
         val person = repository.findById(id)
             .orElseThrow { ResourceNotFoundException("No records found for this ID!") }
-        return personMapper.mapEntityToVO(person)
+        val personVO: PersonVO = personMapper.mapEntityToVO(person)
+        val withSelfRel = linkTo(PersonController::class.java).slash(personVO.key).withSelfRel()
+        personVO.add(withSelfRel)
+        return personVO
     }
 
     fun create(person: PersonVO): PersonVO {
